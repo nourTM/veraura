@@ -1,0 +1,29 @@
+{
+  "vertex_lab_01": {
+    "title": "Vertex AI Tokenization Lab",
+    "steps": [
+      {
+        "id": 1,
+        "instruction": "Find the 'Language' button and click it.",
+        "action_type": "click",
+        "selector": "button[aria-label='Language']",
+        "highlight_selector": "button[aria-label='Language']"
+      },
+      {
+        "id": 2,
+        "instruction": "Type 'Artificial Intelligence' in the prompt box.",
+        "action_type": "text_match",
+        "selector": "#prompt-input",
+        "expected": "Artificial Intelligence",
+        "highlight_selector": "#prompt-input"
+      },
+      {
+        "id": 3,
+        "instruction": "Now, click the 'Submit' button to analyze the text.",
+        "action_type": "click",
+        "selector": "button#submit-btn",
+        "highlight_selector": "button#submit-btn"
+      }
+    ]
+  }
+}
