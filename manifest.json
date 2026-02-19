@@ -5,20 +5,21 @@
   "version": "1.0",
   "permissions": ["activeTab", "scripting", "storage"],
   "host_permissions": ["<all_urls>"], 
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png" 
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"]
-    }
-  ],
   "web_accessible_resources": [
     {
-      "resources": ["tasks.json"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "tasks.json"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ]
 }

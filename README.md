@@ -36,12 +36,13 @@ You can easily add new guided labs by editing the `tasks.json` file.
 
 ### Task Structure
 
-Each task is an object with a unique ID (e.g., `"vertex_lab_01"`) and contains a `title` and an array of `steps`.
+Each task is an object with a unique ID (e.g., `"vertex_lab_01"`) and contains several properties:
 
 ```json
 {
   "your_task_id": {
     "title": "Title of Your New Lab",
+    "start_url": "https://www.example.com/page-for-lab",
     "steps": [
       // ... array of step objects
     ]
@@ -58,8 +59,8 @@ Each object in the `steps` array defines a single action for the user to take.
 | `id`                 | A unique number for the step.                                                                         | `1`                            |
 | `instruction`        | The text displayed to the user in the instruction tooltip.                                            | `"Click the 'Submit' button."` |
 | `action_type`        | The type of user interaction to listen for. Supported types: `"click"`, `"text_match"`.               | `"click"`                      |
-| `selector`           | The CSS selector used to find the element the user must interact with (e.g., for attaching an event). | `"#submit-btn"`                |
-| `highlight_selector` | The CSS selector for the element to draw the highlight around. Often the same as `selector`.          | `"#submit-btn"`                |
+| `selector`           | The CSS selector to find the interactive element. Can be a string, or an array of strings to traverse shadow DOMs. For an array, each subsequent selector is queried within the shadow root of the element found by the previous one. | `["my-widget", "button"]`      |
+| `highlight_selector` | The CSS selector for the element to highlight. Also supports shadow DOM traversal via an array of strings. Often the same as `selector`. | `["my-widget", "button"]`      |
 | `expected`           | **Required for `text_match`**. The exact string the user must type for the step to be complete.       | `"Artificial Intelligence"`    |
 
 ### Example Step

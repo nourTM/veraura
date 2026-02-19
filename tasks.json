@@ -1,6 +1,7 @@
 {
   "vertex_lab_01": {
     "title": "Vertex AI Tokenization Lab",
+    "start_url": "file:///C:/Users/nour.ben-saadi/Desktop/test_lab.html",
     "steps": [
       {
         "id": 1,
@@ -23,6 +24,34 @@
         "action_type": "click",
         "selector": "button#submit-btn",
         "highlight_selector": "button#submit-btn"
+      }
+    ]
+  },
+  "teachable_machine_02": {
+    "title": "Teachable Machine Interaction Lab ",
+    "start_url": "https://teachablemachine.withgoogle.com/",
+    "steps": [
+      {
+        "id": 1,
+        "instruction": "Find the 'Get Started' button and click it.",
+        "action_type": "click",
+        "selector": "a.button[href='/train']",
+        "highlight_selector": "a.button[href='/train']"
+      },
+      {
+        "id": 2,
+        "instruction": "Click on the 'Image Project' option to create a new project.",
+        "action_type": "click",
+        "selector": ["tm-new-model-card#image-card", "#main-project"],
+        "highlight_selector": "tm-new-model-card#image-card"
+      },
+
+      {
+        "id": 3,
+        "instruction": "Click on the 'Standard Image Model' option in the sub-project modal.",
+        "action_type": "click",
+        "selector": ["tm-new-model-card#image-card", "tm-modal[open]", ".project.primary-project"],
+        "highlight_selector": ["tm-new-model-card#image-card", "tm-modal[open]", ".project.primary-project"]
       }
     ]
   }
