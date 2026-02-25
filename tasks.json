@@ -50,8 +50,82 @@
         "id": 3,
         "instruction": "Click on the 'Standard Image Model' option in the sub-project modal.",
         "action_type": "click",
-        "selector": ["tm-new-model-card#image-card", "tm-modal[open]", ".project.primary-project"],
-        "highlight_selector": ["tm-new-model-card#image-card", "tm-modal[open]", ".project.primary-project"]
+        "selector": ["tm-new-model-card#image-card", "tm-modal#sub-project-modal .project.primary-project"],
+        "highlight_selector": ["tm-new-model-card#image-card", "tm-modal#sub-project-modal .project.primary-project"]
+      },
+      {
+        "id": 4,
+        "instruction": "Click on 'Class 1' to rename it.",
+        "action_type": "click",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container header.section.header tm-editable-label"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container header.section.header tm-editable-label"]
+      },
+      {
+        "id": 5,
+        "instruction": "Type 'Cat' and press Enter.",
+        "action_type": "text_match",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container header.section.header tm-editable-label", "input#label-input"],
+        "expected": "Cat",
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container header.section.header tm-editable-label", "input#label-input"]
+      },
+      {
+        "id": 6,
+        "instruction": "Now, click on 'Class 2' to rename it.",
+        "action_type": "click",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container header.section.header tm-editable-label"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container header.section.header tm-editable-label"]
+      },
+      {
+        "id": 7,
+        "instruction": "Type 'Not Cat' and press Enter.",
+        "action_type": "text_match",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container header.section.header tm-editable-label", "input#label-input"],
+        "expected": "Not Cat",
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container header.section.header tm-editable-label", "input#label-input"]
+      },
+      {
+        "id": 8,
+        "instruction": "Click 'Upload' to add your cat images. Be sure to add 5-10 images from different angles, colors, and sizes.",
+        "action_type": "click",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container div#open-container div#sample-input-list button[title='Add sample: upload']"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container div#open-container div#sample-input-list button[title='Add sample: upload']"]
+      },
+      {
+        "id": 9,
+        "instruction": "Great! The guide will continue automatically once at least 5 samples have been added.",
+        "action_type": "text_change_match",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container div#open-samples-label"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(1)", "div#container div#open-samples-label"],
+        "expected": "(?:[5-9]|[1-9]\\d+)\\s+Image Sample(s?)"
+      },
+      {
+        "id": 10,
+        "instruction": "Now, for the 'Not Cat' class, click 'Upload'. Add 5-10 varied images (e.g., dogs, people, objects).",
+        "action_type": "click",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container div#open-container div#sample-input-list button[title='Add sample: upload']"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container div#open-container div#sample-input-list button[title='Add sample: upload']"]
+      },
+      {
+        "id": 11,
+        "instruction": "The guide will continue once at least 5 samples are added to the 'Not Cat' class.",
+        "action_type": "text_change_match",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container div#open-samples-label"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-classifier-list#classifier-list tm-classifier-drawer:nth-of-type(2)", "div#container div#open-samples-label"],
+        "expected": "(?:[5-9]|[1-9]\\d+)\\s+Image Sample(s?)"
+      },
+      {
+        "id": 12,
+        "instruction": "Click 'Train Model' and wait for the training to complete (this may take 30-60 seconds).",
+        "action_type": "click",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-train#train", "tm-progress-button#train-btn"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-train#train", "tm-progress-button#train-btn"]
+      },
+      {
+        "id": 13,
+        "instruction": "Great job! In the 'Preview' panel, select 'File' or 'Webcam' to test your model and see how it performs.",
+        "action_type": "click",
+        "selector": ["tm-teachable-image-app#tmApp", "tm-run#run", "select#select-input"],
+        "highlight_selector": ["tm-teachable-image-app#tmApp", "tm-run#run", "select#select-input"]
       }
     ]
   }

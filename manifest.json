@@ -3,11 +3,12 @@
   "name": "VeraAura: Lab Guide",
   "description": "Guided verification for AI and Cloud labs.",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting", "storage"],
+  "permissions": ["activeTab", "scripting", "storage", "identity", "webNavigation"],
   "host_permissions": ["<all_urls>"], 
   "background": {
     "service_worker": "background.js"
   },
+  "options_page": "options.html",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png" 

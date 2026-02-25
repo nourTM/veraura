@@ -57,27 +57,6 @@ async function initializePopup() {
 }
 
 /**
- * Wraps chrome.tabs.sendMessage in a Promise for async/await usage.
- * @param {number} tabId The ID of the tab to send the message to.
- * @param {any} message The message to send.
- * @returns {Promise<any>} A promise that resolves with the response.
- */
-function sendMessageToTab(tabId, message) {
-    return new Promise((resolve, reject) => {
-        chrome.tabs.sendMessage(tabId, message, (response) => {
-            if (chrome.runtime.lastError) {
-                // Content script might not be injected yet or tab is protected.
-                console.warn("VeraAura: Could not send message:", chrome.runtime.lastError.message);
-                // Resolve with a default value to avoid unhandled promise rejections.
-                resolve({ success: false, error: chrome.runtime.lastError.message });
-            } else {
-                resolve(response);
-            }
-        });
-    });
-}
-
-/**
  * Checks if the current tab's URL is valid for the given task.
  * @param {object} task The task object, which may have a start_url.
  * @returns {Promise<boolean>} True if the URL is valid or not specified.
@@ -95,31 +74,30 @@ async function checkUrlForTask(task) {
 
 document.getElementById('taskSelector').addEventListener('change', async (e) => {
     const taskId = e.target.value;
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     if (taskId && tasksData[taskId]) {
         // If a different task is selected, stop the old one.
         if (currentTaskId && currentTaskId !== taskId) {
-            await sendMessageToTab(tab.id, { action: "STOP_TASK" });
+            chrome.runtime.sendMessage({ action: "STOP_TASK_ON_TAB" });
         }
         currentTaskId = taskId;
         activeTask = tasksData[taskId];
         currentStepIndex = 0; // Reset step index
 
+        // Save state, then tell the background script to handle the rest.
+        await chrome.storage.local.set({ storedTaskId: taskId, storedStepIndex: 0 });
+        chrome.runtime.sendMessage({ action: "INITIATE_TASK" });
+
+        // Update the popup UI immediately based on URL validity.
         const isUrlValid = await checkUrlForTask(activeTask);
         if (isUrlValid) {
-            await chrome.storage.local.set({ storedTaskId: taskId, storedStepIndex: 0 });
             updateUI();
-            startTaskOnPage();
         } else {
-            // URL is invalid. Stop any active task and show a message.
-            await chrome.storage.local.set({ storedTaskId: taskId, storedStepIndex: 0 }); // Save selection
             updateUIForInvalidUrl();
-            await sendMessageToTab(tab.id, { action: "STOP_TASK" });
         }
     } else {
         // User selected "-- Choose your Lab --"
-        await sendMessageToTab(tab.id, { action: "STOP_TASK" });
+        chrome.runtime.sendMessage({ action: "STOP_TASK_ON_TAB" });
         currentTaskId = null;
         activeTask = null;
         currentStepIndex = 0;
@@ -147,33 +125,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         })();
     }
 });
-
-async function startTaskOnPage() {
-    if (!activeTask) return;
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });    
-    if (!tab || !tab.id) {
-        console.warn("VeraAura: No active tab found");
-        return;
-    }
-    
-    try {
-        // 1. Ensure the content script is injected before sending a message.
-        await chrome.scripting.executeScript({
-            target: { tabId: tab.id },
-            files: ['content.js']
-        });
-
-        // 2. Send the message to start the task, using our helper function.
-        await sendMessageToTab(tab.id, {
-            action: "START_TASK",
-            task: activeTask,
-            stepIndex: currentStepIndex
-        });
-    } catch (e) {
-        console.error("VeraAura: Failed to inject script or send message:", e);
-        document.getElementById('status').innerText = "Error: Cannot run on this page.";
-    }
-}
 
 function updateUI() {
     const guideBox = document.getElementById('guideBox');
@@ -212,6 +163,10 @@ function markAsDone() {
     document.getElementById('stepInstruction').innerText = "Task Complete!";
     document.getElementById('status').innerHTML = "🎉 Well Done! You finished the lab! 🎉";
     chrome.storage.local.remove(["storedTaskId", "storedStepIndex"]);
+
+    // Mark this specific task as completed in sync storage to prevent re-logging.
+    const completionKey = `completed_${currentTaskId}`;
+    chrome.storage.sync.set({ [completionKey]: true });
     
     // Fun animation
     const statusEl = document.getElementById('status');
@@ -223,7 +178,8 @@ function markAsDone() {
 
     // Stop monitoring on the page
     chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-        chrome.tabs.sendMessage(tab.id, { action: "STOP_TASK" });
+        // The background script will handle sending the stop message
+        chrome.runtime.sendMessage({ action: "STOP_TASK_ON_TAB" });
     });
 }
 
@@ -234,8 +190,15 @@ document.addEventListener('DOMContentLoaded', initializePopup);
 document.getElementById('resetBtn').addEventListener('click', async () => {
     currentStepIndex = 0;
     await chrome.storage.local.set({ storedStepIndex: 0 });
+
+    // Also clear the completion status for this task so it can be logged again if re-done.
+    if (currentTaskId) {
+        const completionKey = `completed_${currentTaskId}`;
+        await chrome.storage.sync.remove(completionKey);
+    }
+
     updateUI();
-    // Restart the task on the page to reflect the reset state immediately
-    startTaskOnPage();
+    // Tell the background script to restart the task on the current page
+    chrome.runtime.sendMessage({ action: "INITIATE_TASK" });
     console.log("VeraAura: Step index reset to 0.");
 });
